@@ -398,3 +398,65 @@ This assumes that:
 Note that the service will crash on errors.
 The host system is responsible for restarting it in that case.
 If it's running in a Docker container you can easily achieve this with the `--restart on-failure` option.
+
+### Virtual Machine that allow create docker components for debugging purpose
+
+Step-by-step instruction to building and running virtual machine with all needed dockers.
+
+- Install require libs:
+We require vagrant with `>=2.1.0` version
+
+```bash
+apt-get update
+apt-get install vagrant virtualbox
+```
+- Go to virtual machine directory
+
+```bash
+cd <path to concent deployment repository>/concent-vm/
+```
+
+- Specify branch/version via `$CONCENT_DEPLOYMENT_VERSION`  shell environment variable(default: master)
+
+```bash
+export CONCENT_DEPLOYMENT_VERSION=master
+```
+
+- Install require plugins
+Remember to install it in other directory than `concent-vm/`
+
+```bash
+vagrant plugin install vagrant-vbguest
+```
+
+- Initialized and run virtual machine
+
+```bash
+vagrant up
+```
+
+- If you have a problem with `vboxdrv` kernel module, try:
+
+```bash
+sudo modprobe vboxdrv
+```
+
+Useful command(You need be in `concent-vm` directory):
+
+- Stop virtual machine
+
+```bash
+vagrant halt
+```
+
+- Destroy virtual machine
+
+```bash
+vagrant destroy
+```
+
+- Connect to virtual machine
+
+```bash
+vagrant ssh
+```
