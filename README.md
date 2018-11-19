@@ -399,64 +399,58 @@ Note that the service will crash on errors.
 The host system is responsible for restarting it in that case.
 If it's running in a Docker container you can easily achieve this with the `--restart on-failure` option.
 
-### Virtual Machine that allow create docker components for debugging purpose
+### Concent Virtual Machine
 
-Step-by-step instruction to building and running virtual machine with all needed dockers.
+The `concent-vm/` directory contains a Vagrant configuration that creates up a virtual machine with Concent set up for development.
 
-- Install require libs:
-We require vagrant with `>=2.1.0` version
+#### Prerequisites
+##### Vagrant
+You need Vagrant at least in version 2.1.0.
+Install it with your system package manager.
 
-```bash
-apt-get update
-apt-get install vagrant virtualbox
+##### VirtualBox
+The machine runs on VirtualBox.
+You obviously need to install it with your package manager.
+
+##### Vagrant plugins
+Install `vagrant-vbguest` plugin:
 ```
-- Go to virtual machine directory
-
-```bash
-cd <path to concent deployment repository>/concent-vm/
-```
-
-- Specify branch/version via `$CONCENT_DEPLOYMENT_VERSION`  shell environment variable(default: master)
-
-```bash
-export CONCENT_DEPLOYMENT_VERSION=master
-```
-
-- Install require plugins
-Remember to install it in other directory than `concent-vm/`
-
-```bash
 vagrant plugin install vagrant-vbguest
 ```
 
-- Initialized and run virtual machine
-
-```bash
-vagrant up
-```
-
-- If you have a problem with `vboxdrv` kernel module, try:
-
+You may need to reload the `vboxdrv` kernel module after this operation:
 ```bash
 sudo modprobe vboxdrv
 ```
 
-Useful command(You need be in `concent-vm` directory):
-
-- Stop virtual machine
-
-```bash
-vagrant halt
+#### Building machine
+``` bash
+cd concent-vm/
+export CONCENT_DEPLOYMENT_VERSION=master
+vagrant up
 ```
 
-- Destroy virtual machine
+The build process downloads code from Github (it does **not** copy the code from your local repository).
+`CONCENT_DEPLOYMENT_VERSION` shell variable determines the `concent-deployment` branch/tag/commit which will be checked out after downloading the code.
+You can use it to determine which version of Concent should be used.
 
-```bash
-vagrant destroy
-```
+#### Using the machine
+Please read the [Getting Started](https://www.vagrantup.com/intro/getting-started/) page in Vagrant docs to get familar with basic operations like starting the machine, logging into it via ssh or destroying it.
 
-- Connect to virtual machine
-
-```bash
-vagrant ssh
-```
+Here's some extra information you should be aware of when using the machine:
+- `Vagrantfile` creates a virtual disk image in `concent-vm/disk/blockchain_disk.vdi`.
+    This image is meant to store the blockchain data needed for geth to connect and use the Ethereum testnet.
+    Since downloading this data can take a while, the machine is configured to never delete it on its own.
+    It always gets detached before you destroy the machine.
+    - This image is quite large (currently 30 GB by default) so make sure you have enough disk space.
+      You can manually tweak the size in `Vagrantfile` but keep in mind that it has to be big enough to store the whole blockchain.
+    - If you want to start from scratch, you need to remove the file manually.
+        It should not be necessary in normal circumstances.
+        Geth can deal with partially downloaded blockchain.
+- The following services are automatically started inside the machine when the it boots:
+    - Docker
+    - PostgreSQL (accepts connections from within the machine without a password)
+    - RabbitMQ (runs in a Docker container)
+    - Geth (runs in a Docker container)
+    - nginx (configured to act as `nginx-storage`, built from `concent-deployment`)
+- The initialization playbook automatically creates PostgreSQL databases required by Concent
