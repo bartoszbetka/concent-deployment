@@ -467,8 +467,10 @@ python manage.py runserver 0.0.0.0:8000
 ```
 
 #### Using the machine
+##### Using Vagrant
 Please read the [Getting Started](https://www.vagrantup.com/intro/getting-started/) page in Vagrant docs to get familar with basic operations like starting the machine, logging into it via ssh or destroying it.
 
+##### What's inside the machine
 Here's some extra information you should be aware of when using the machine:
 - `Vagrantfile` creates a virtual disk image in `concent-vm/disk/blockchain_disk.vdi`.
     This image is meant to store the blockchain data needed for geth to connect and use the Ethereum testnet.
@@ -486,3 +488,37 @@ Here's some extra information you should be aware of when using the machine:
     - Geth (runs in a Docker container)
     - nginx (configured to act as `nginx-storage`, built from `concent-deployment`)
 - The initialization playbook automatically creates PostgreSQL databases required by Concent
+
+##### Helper scripts
+The machine provides several scripts that automate common development tasks.
+They're located in `/home/vagrant/bin/` which is in user's `PATH` so you can execute them from any location.
+
+###### `concent-env.sh`
+- Loads the virtualenv.
+- Changes the directory to `concent`.
+
+This script is meant to be sourced rather than executed:
+```
+source concent-env.sh
+```
+
+###### `concent-reset.sh`
+- Destroys and recreates the databases.
+- Migrates the databases.
+- Empties RabbitMQ queues.
+- Re-creates the superuser account.
+- Restarts all the services.
+
+###### `concent-migrate.sh`
+- Migrates the databases, preserving their content.
+
+###### `concent-update.sh`
+- Fetches the latest code from git.
+- Checks out the `master` branch (you can change the branch by modifying the `DEFAULT_BRANCH`) variable inside the script.
+- Destroys and recreates the virtualenv.
+- Installs Concent dependencies in the virtualenv.
+- Migrates the databases.
+
+###### `concent-run.sh`
+- Starts `manage.py runserver`.
+- Starts 3 celery worker instances attached to different queues.
