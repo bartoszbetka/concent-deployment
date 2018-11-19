@@ -1,5 +1,5 @@
 # Configure files created by Vagrant and VirtualBox.
-/concent-vm/.vagrant/
+/.vagrant/
 
 # Attached disk to vagrant
-/concent-vm/disk/
+/disk/
