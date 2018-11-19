@@ -1,8 +1,7 @@
 Vagrant.configure("2") do |config|
 
     unless Vagrant.has_plugin?("vagrant-vbguest")
-        puts "Please install `vagrant-vbguest` plugin before execute `vagrant up`.\n"  +
-             "Remember to install it in other directory than concent-vm/"
+        puts "Vagrant plugin `vagrant-vbguest` is not installed. Please follow the instructions from concent-deployment README."
         abort
     end
 
