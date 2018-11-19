@@ -77,8 +77,8 @@
             src:        "{{ concent_deployment_dir }}/concent-vm/pg_hba.conf"
             dest:       "/etc/postgresql/{{ debian_postgres_version }}/main/pg_hba.conf"
             remote_src: yes
-            owner:      builder
-            group:      builder
+            owner:      postgres
+            group:      postgres
 
         - name:   Restart postgresql service
           service:
