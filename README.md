@@ -424,6 +424,12 @@ sudo modprobe vboxdrv
 ```
 
 #### Building machine
+##### `extra_settings.py`
+Create a file called `concent-vm/extra_settings.py`.
+This file will be uploaded into the machine and imported into Concent's `local_settings.py`.
+You can use it to override default setting values or provide secrets.
+
+##### `vagrant up`
 ``` bash
 cd concent-vm/
 export CONCENT_DEPLOYMENT_VERSION=master
@@ -433,6 +439,32 @@ vagrant up
 The build process downloads code from Github (it does **not** copy the code from your local repository).
 `CONCENT_DEPLOYMENT_VERSION` shell variable determines the `concent-deployment` branch/tag/commit which will be checked out after downloading the code.
 You can use it to determine which version of Concent should be used.
+
+##### Installing Concent
+``` bash
+concent_version=master
+ansible-playbook install-concent.yml                               \
+    --extra-vars  concent_version=$concent_version                 \
+    --private-key .vagrant/machines/default/virtualbox/private_key \
+    --user        vagrant                                          \
+    --inventory   inventory
+```
+
+You can use `concent_version` to define which branch/tag/commit from the `concent` repository will be checked out before the build.
+
+##### Running Concent
+``` bash
+cd /home/vagrant/concent/concent_api/
+gunicorn concent_api.wsgi:application \
+    --bind 0.0.0.0:8000
+```
+
+or
+
+``` bash
+cd /home/vagrant/concent/concent_api/
+python manage.py runserver 0.0.0.0:8000
+```
 
 #### Using the machine
 Please read the [Getting Started](https://www.vagrantup.com/intro/getting-started/) page in Vagrant docs to get familar with basic operations like starting the machine, logging into it via ssh or destroying it.
