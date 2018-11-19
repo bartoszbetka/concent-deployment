@@ -466,6 +466,18 @@ cd /home/vagrant/concent/concent_api/
 python manage.py runserver 0.0.0.0:8000
 ```
 
+##### Installing Golem
+``` bash
+golem_version=develop
+ansible-playbook install-golem.yml                                 \
+    --extra-vars  golem_version=$golem_version                     \
+    --private-key .vagrant/machines/default/virtualbox/private_key \
+    --user        vagrant                                          \
+    --inventory   inventory
+```
+
+You can use `golem_version` to define which branch/tag/commit from the `golemfactory/golem` repository will be installed.
+
 #### Using the machine
 ##### Using Vagrant
 Please read the [Getting Started](https://www.vagrantup.com/intro/getting-started/) page in Vagrant docs to get familar with basic operations like starting the machine, logging into it via ssh or destroying it.
@@ -522,3 +534,31 @@ source concent-env.sh
 ###### `concent-run.sh`
 - Starts `manage.py runserver`.
 - Starts 3 celery worker instances attached to different queues.
+
+###### `golem-env.sh`
+- Loads the virtualenv with Golem's dependencies.
+- Changes the directory to `golem`.
+
+This script is meant to be sourced rather than executed:
+```
+source golem-env.sh
+```
+
+###### `golem-run-console-mode.sh`
+- Sources `golem-env.sh`.
+- Starts `golemapp` in console mode and passes all the command-line arguments to it.
+
+You can use it to start Golem like this:
+``` bash
+golem-run-console-mode.sh \
+    --accept-terms        \
+    --password $password
+```
+
+`$password` needs to contain your Golem password.
+
+You can see all the available `golemapp` options by running:
+
+``` bash
+golem-run-console-mode.sh --help
+```
