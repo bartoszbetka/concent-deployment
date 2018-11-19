@@ -405,7 +405,7 @@ The `concent-vm/` directory contains a Vagrant configuration that creates up a v
 
 #### Prerequisites
 ##### Vagrant
-You need Vagrant >= 2.1.0.
+You need Vagrant >= 2.2.0.
 Install it with your system package manager.
 
 ##### VirtualBox
