@@ -3,3 +3,6 @@
 
 # Attached disk to vagrant
 /disk/
+
+# This file must be provided by the user
+/extra_settings.py
