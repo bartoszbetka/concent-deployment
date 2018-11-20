@@ -152,24 +152,35 @@ Do this if you want to use the remote server for building and deploying.
 
     Where the `$user` shell variable contains the name of your shell account on the remote machine.
 
-All the instructions below assume that you're using the remote server.
 
-### Building containers and cluster configuration
+### Uploading secrets and access to deploy on specific gcloud environment
+This is a separate step that is needed on the new server and in the case of changes in secrets
+
 Before following these instructions, please make sure that the Concent version you're building (i.e. `concent_version` in `containers/versions.yml`) is listed in `concent_versions` dictionary in `var-concent-<cluster>.yml` file.
 At any given time there can be multiple Concent versions deployed to different clusters within the same environment (e.g. `v1.8` and `v1.9` on `dev`, `v1.9` and `v2.0` on `staging`, etc.) and this dictionary contains configuration values that are not the same for all those clusters.
 Without providing configuration values there you won't be able to generate Kubernetes cluster configuration or use Ansible playbooks to deploy to the cluster.
 
+```bash
+cd concent-deployment/concent-builder/
+ansible-playbook install-secrets.yml                               \
+    --extra-vars cluster=$cluster                                  \
+    --inventory  ../../concent-deployment-values/ansible_inventory \
+    --user       $user
+```
+
+All the instructions below assume that you're using the remote server.
+
+### Building containers and cluster configuration
+
 ``` bash
 cd concent-deployment/concent-builder/
-ansible-playbook install-repositories.yml                          \
-    --extra-vars cluster=$cluster                                  \
-    --inventory  ../../concent-deployment-values/ansible_inventory \
-    --user       $user
+ansible-playbook install-repositories.yml      \
+    --extra-vars cluster=$cluster              \
+    --inventory  ../../inventory
 
-ansible-playbook build-test-and-push.yml                           \
-    --extra-vars cluster=$cluster                                  \
-    --inventory  ../../concent-deployment-values/ansible_inventory \
-    --user       $user
+ansible-playbook build-test-and-push.yml       \
+    --extra-vars cluster=$cluster              \
+    --inventory  ../../inventory
 ```
 
 ### Deploying secrets
@@ -192,8 +203,7 @@ Secret deployment is separate from deployment of the application specifically so
 cd concent-deployment/concent-builder/
 ansible-playbook deploy.yml                                        \
     --extra-vars cluster=$cluster                                  \
-    --inventory  ../../concent-deployment-values/ansible_inventory \
-    --user       $user
+    --inventory  ../../inventory
 ```
 
 ### Update configuration of nginx-proxy
@@ -231,8 +241,7 @@ ansible-playbook job-cleanup.yml                                   \
 
 ansible-playbook reset-db.yml                                      \
     --extra-vars "cluster=$cluster cluster_type=$cluster_type"     \
-    --inventory  ../../concent-deployment-values/ansible_inventory \
-    --user       $user
+    --inventory  ../../inventory
 ```
 
 **WARNING**: This operation removes all the data from an existing database.
@@ -247,13 +256,11 @@ Migrations should be executed after containers with new version have been deploy
 cd concent-deployment/concent-builder/
 ansible-playbook job-cleanup.yml                                   \
     --extra-vars cluster=$cluster                                  \
-    --inventory  ../../concent-deployment-values/ansible_inventory \
-    --user       $user
+    --inventory  ../../inventory
 
 ansible-playbook migrate-db.yml                                    \
     --extra-vars "cluster=$cluster cluster_type=$cluster_type"     \
-    --inventory  ../../concent-deployment-values/ansible_inventory \
-    --user       $user
+    --inventory  ../../inventory
 ```
 
 It's safe to run migrations even if there are no changes - Django will detect that and simply leave the schema as is.
