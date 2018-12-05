@@ -1,0 +1,78 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.31">
+  <actions>
+    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.20">
+      <jobPropertyDescriptors>
+        <string>org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty</string>
+        <string>com.coravy.hudson.plugins.github.GithubProjectProperty</string>
+      </jobPropertyDescriptors>
+    </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
+      <projectUrl>https://github.com/bartoszbetka/concent-deployment.git/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.3">
+          <spec></spec>
+        </com.cloudbees.jenkins.GitHubPushTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.61">
+node {
+    stage (&apos;Checkout repository&apos;) {
+        ansiblePlaybook( 
+            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/set-concent-version.yml&apos;,
+            extras: &apos;--connection local&apos;
+       )
+    }
+    stage (&apos;Build&apos;) {
+        ansiblePlaybook( 
+            extraVars: [
+                cluster: &apos;concent-dev&apos;,
+            ],
+            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/install-repositories.yml&apos;,
+            extras: &apos;--connection local&apos;
+        )
+        ansiblePlaybook( 
+            extraVars: [
+                cluster: &apos;concent-dev&apos;,
+            ],
+            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/build-test-and-push.yml&apos;,
+            extras: &apos;--connection local&apos;
+        )
+    }
+    stage (&apos;Deploy&apos;) {
+        ansiblePlaybook( 
+            extraVars: [
+                cluster: &apos;concent-dev&apos;,
+            ],
+            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/deploy.yml&apos;,
+            extras: &apos;--connection local&apos;
+        )
+    }
+    stage (&apos;Test&apos;) {
+        ansiblePlaybook( 
+            extraVars: [
+                cluster: &apos;concent-dev&apos;,
+            ],
+            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/configure-and-run-tests.yml&apos;,
+            extras: &apos;--connection local&apos;
+        )
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
