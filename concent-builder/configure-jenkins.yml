@@ -16,8 +16,10 @@
             dest:    "{{ jenkins_home_dir }}/{{ item.name }}"
             clone:   yes
             update:  yes
+            version: dev
           with_items:
-            - { url: "{{ repositories['concent-deployment'].url }}", name: concent-deployment }
+          #  - { url: "{{ repositories['concent-deployment'].url }}", name: concent-deployment }
+            - { url: "https://github.com/bartoszbetka/concent-deployment.git", name: concent-deployment }
             - { url: "{{ deployment_values_repository }}", name: concent-deployment-values }
 
         - name: Create directory for concent jenkins secrets
@@ -69,12 +71,13 @@
         - name: Upload jenkins secrets
           copy:
             src:   "{{ local_secret_dir }}/jenkins/{{ item }}"
-            dest:  "/var/lib/jenkins/users/admin/{{ item }}"
+            dest:  "/var/lib/jenkins/{{ path }}{{ item }}"
             owner: "jenkins"
             group: "jenkins"
           with_items:
-            - config.xml
-            - apiTokenStats.xml
+            - { path: "users/admin/" name: "config.xml" }
+            - { path: "users/admin/" name: "apiTokenStats.xml" }
+            - { path: "" name: "credentials.xml" }
 
         - name: Upload jenkins configuration file
           # FIXME This need use as remote_src
@@ -116,6 +119,7 @@
           with_items:
             - workflow-aggregator
             - ansible
+            - github-oauth
 
     - become:      yes
       become_user: root
