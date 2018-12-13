@@ -144,3 +144,22 @@
               github-oauth
           args:
             chdir: "{{ jenkins_home_dir }}/"
+
+    - become:      yes
+      become_user: root
+      block:
+        - name: Restart jenkins service
+          service:
+            name:    jenkins
+            state:   restarted
+
+        - name: Add nginx config
+          copy:
+            src:        "{{ jenkins_configuration_files_dir }}/default"
+            dest:       "/etc/nginx/sites-enabled/default"
+            remote_src: yes
+
+        - name: Restart nginx service
+          service:
+            name:    nginx
+            state:   restarted
