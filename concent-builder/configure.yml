@@ -94,3 +94,19 @@
             src:  "jenkins-configuration-files/jenkins_sudoers"
             dest: "/etc/sudoers.d/jenkins"
 
+        - name: Delete default nginx config
+          file:
+            path:  "/etc/nginx/sites-enabled/default"
+            state: absent
+
+        - name: Add nginx config
+          copy:
+            src:        "jenkins-configuration-files/jenkins"
+            dest:       "/etc/nginx/sites-enabled/jenkins"
+
+        - name: Restart nginx service
+          service:
+            name:    nginx
+            state:   restarted
+
+
