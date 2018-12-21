@@ -22,7 +22,7 @@
           with_items:
           #  - { url: "{{ repositories['concent-deployment'].url }}", name: concent-deployment }
             - { url: "https://github.com/bartoszbetka/concent-deployment.git", name: concent-deployment }
-            - { url: "{{ deployment_values_repository }}", name: concent-deployment-values }
+            - { url: "{{ repositories['concent-deployment-values'].url }}", name: concent-deployment-values }
 
         - name: Create directory for concent jenkins secrets
           file:
