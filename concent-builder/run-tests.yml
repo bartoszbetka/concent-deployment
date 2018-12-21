@@ -1,0 +1,18 @@
+- hosts:
+    - concent-builder
+  vars_files:
+    - consts.yml
+    - repositories.yml
+    - ../containers/versions.yml
+    - "{{ deployment_values }}/var.yml"
+    - "{{ deployment_values }}/var-{{ cluster }}.yml"
+  tasks:
+    - become:      yes
+      become_user: jenkins
+      block:
+        - name:  Run end-to-end test
+          shell: source ../virtualenv/bin/activate &&                                         \
+              ./api-e2e-tests.sh "http://{{ concent_versions[concent_version].gke.cluster }}"
+          args:
+            chdir:      "{{ jenkins_home_dir }}/concent/"
+            executable: /bin/bash

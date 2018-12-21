@@ -1,0 +1,16 @@
+- hosts:
+    - concent-builder
+  vars_files:
+    - consts.yml
+    - repositories.yml
+    - ../containers/versions.yml
+    - "{{ deployment_values }}/var.yml"
+    - "{{ deployment_values }}/var-{{ cluster }}.yml"
+  tasks:
+    - name: Remove the concent and virtualenv directories to get rid of files from previous builds
+      file:
+        path:    "{{ jenkins_home_dir }}/{{ item }}"
+        state:   absent
+      with_items:
+        - concent
+        - virtualenv

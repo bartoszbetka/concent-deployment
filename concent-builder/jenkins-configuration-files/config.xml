@@ -71,13 +71,33 @@ node {
             extras: &apos;--connection local&apos;
         )
     }
+    stage (&apos;Initialized Test Environment&apos;) {
+        ansiblePlaybook( 
+            extraVars: [
+                cluster: &apos;concent-dev&apos;,
+            ],
+            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/initialized-test-environment.yml&apos;,
+            extras: &apos;--connection local&apos;
+        )
+    }
     stage (&apos;Test&apos;) {
         ansiblePlaybook( 
             extraVars: [
                 cluster: &apos;concent-dev&apos;,
             ],
             inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/configure-and-run-tests.yml&apos;,
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/run-tests.yml&apos;,
+            extras: &apos;--connection local&apos;
+        )
+    }
+    stage (&apos;Cleanup Test Environment&apos;) {
+        ansiblePlaybook( 
+            extraVars: [
+                cluster: &apos;concent-dev&apos;,
+            ],
+            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
+            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/cleanup-test-environment.yml&apos;,
             extras: &apos;--connection local&apos;
         )
     }
