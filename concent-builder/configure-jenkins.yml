@@ -86,7 +86,7 @@
 
         - name: Upload jenkins configuration file
           copy:
-            src:        "{{ jenkins_configuration_files_dir }}/{{ item.name }}"
+            src:        "{{ jenkins_configuration_files_dir }}/files/jenkins/{{ item.name }}"
             dest:       "/var/lib/jenkins{{ item.path }}{{ item.name }}"
             owner:      "jenkins"
             group:      "jenkins"
@@ -97,7 +97,7 @@
 
         - name: Upload jenkins template configuration file
           template:
-            src:   "jenkins-configuration-files/jenkins.model.JenkinsLocationConfiguration.xml.j2"
+            src:   "template/jenkins/jenkins.model.JenkinsLocationConfiguration.xml.j2"
             dest:  "/var/lib/jenkins/jenkins.model.JenkinsLocationConfiguration.xml"
             owner: "jenkins"
             group: "jenkins"

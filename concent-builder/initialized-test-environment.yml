@@ -21,7 +21,7 @@
 
         - name: Copy local_settings.py file
           copy:
-            src:        "{{ jenkins_home_dir }}/concent-deployment/concent-builder/jenkins-configuration-files/local_settings.py"
+            src:        "{{ jenkins_configuration_files_dir }}/files/jenkins/local_settings.py"
             dest:       "{{ jenkins_home_dir }}/concent/concent_api/concent_api/settings/local_settings.py"
             owner:      jenkins
             group:      jenkins
