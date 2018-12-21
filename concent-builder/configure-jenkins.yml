@@ -134,16 +134,7 @@
           with_items:
             - workflow-aggregator
             - ansible
-
-        - name: Install github plugin for jenkins
-          command: java                                               \
-              -jar jenkins-cli.jar                                    \
-              -s http://localhost:8080/                               \
-              -auth @/home/jenkins/concent-secrets/jenkins/.token     \
-              install-plugin                                          \
-              github-oauth
-          args:
-            chdir: "{{ jenkins_home_dir }}/"
+            - github-oauth
 
     - become:      yes
       become_user: root
