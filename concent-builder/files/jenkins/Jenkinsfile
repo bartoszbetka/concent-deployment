@@ -12,8 +12,8 @@ stage ('Checkout repository') {
     }
     ansiblePlaybook(
         inventory: '/home/jenkins/concent-deployment-values/ansible_inventory',
-        playbook: '/home/jenkins/concent-deployment/concent-builder/set-concent-version.yml',
-        extras: '--connection local'
+        playbook:  '/home/jenkins/concent-deployment/concent-builder/set-concent-version.yml',
+        extras:    '--connection local'
    )
 }
 stage ('Build') {
@@ -22,16 +22,16 @@ stage ('Build') {
             cluster: 'concent-dev',
         ],
         inventory: '/home/jenkins/concent-deployment-values/ansible_inventory',
-        playbook: '/home/jenkins/concent-deployment/concent-builder/install-repositories.yml',
-        extras: '--connection local'
+        playbook:  '/home/jenkins/concent-deployment/concent-builder/install-repositories.yml',
+        extras:    '--connection local'
     )
     ansiblePlaybook(
         extraVars: [
             cluster: 'concent-dev',
         ],
         inventory: '/home/jenkins/concent-deployment-values/ansible_inventory',
-        playbook: '/home/jenkins/concent-deployment/concent-builder/build-test-and-push.yml',
-        extras: '--connection local'
+        playbook:  '/home/jenkins/concent-deployment/concent-builder/build-test-and-push.yml',
+        extras:    '--connection local'
     )
 }
 stage ('Deploy') {
@@ -40,8 +40,8 @@ stage ('Deploy') {
             cluster: 'concent-dev',
         ],
         inventory: '/home/jenkins/concent-deployment-values/ansible_inventory',
-        playbook: '/home/jenkins/concent-deployment/concent-builder/deploy.yml',
-        extras: '--connection local'
+        playbook:  '/home/jenkins/concent-deployment/concent-builder/deploy.yml',
+        extras:    '--connection local'
     )
 }
 stage ('Initialized Test Environment') {
@@ -50,8 +50,8 @@ stage ('Initialized Test Environment') {
             cluster: 'concent-dev',
         ],
         inventory: '/home/jenkins/concent-deployment-values/ansible_inventory',
-        playbook: '/home/jenkins/concent-deployment/concent-builder/initialized-test-environment.yml',
-        extras: '--connection local'
+        playbook:  '/home/jenkins/concent-deployment/concent-builder/initialized-test-environment.yml',
+        extras:    '--connection local'
     )
 }
 stage ('Test') {
@@ -60,8 +60,8 @@ stage ('Test') {
             cluster: 'concent-dev',
         ],
         inventory: '/home/jenkins/concent-deployment-values/ansible_inventory',
-        playbook: '/home/jenkins/concent-deployment/concent-builder/run-tests.yml',
-        extras: '--connection local'
+        playbook:  '/home/jenkins/concent-deployment/concent-builder/run-tests.yml',
+        extras:    '--connection local'
     )
 }
 stage ('Cleanup Test Environment') {
@@ -70,7 +70,7 @@ stage ('Cleanup Test Environment') {
             cluster: 'concent-dev',
         ],
         inventory: '/home/jenkins/concent-deployment-values/ansible_inventory',
-        playbook: '/home/jenkins/concent-deployment/concent-builder/cleanup-test-environment.yml',
-        extras: '--connection local'
+        playbook:  '/home/jenkins/concent-deployment/concent-builder/cleanup-test-environment.yml',
+        extras:    '--connection local'
     )
 }
