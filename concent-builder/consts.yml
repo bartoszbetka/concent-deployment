@@ -5,4 +5,4 @@ local_secret_dir:                ../../concent-secrets
 deployment_values:               ../../concent-deployment-values
 jenkins_address:                 127.0.0.1:8080
 jenkins_home_dir:                /home/jenkins
-jenkins_configuration_files_dir: "{{ jenkins_home_dir }}/concent-deployment/concent-builder/jenkins-configuration-files"
+jenkins_configuration_files_dir: "{{ jenkins_home_dir }}/concent-deployment/concent-builder"

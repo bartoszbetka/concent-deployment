@@ -91,7 +91,7 @@
 
         - name:   Add jenkins role to sudoers
           copy:
-            src:  "jenkins-configuration-files/jenkins_sudoers"
+            src:  "files/jenkins/jenkins_sudoers"
             dest: "/etc/sudoers.d/jenkins"
 
         - name: Delete default nginx config
