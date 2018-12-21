@@ -24,86 +24,11 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.61">
-    <script>properties([[$class:
-&apos;GithubProjectProperty&apos;,
-    displayName: &apos;&apos;,
-    projectUrlStr: &apos;https://github.com/bartoszbetka/concent-deployment.git/&apos;],
-pipelineTriggers([githubPush()])])
-
-node {
-    stage (&apos;Checkout repository&apos;) {
-        dir(&apos;/home/jenkins/concent-deployment/&apos;) {
-            git url:
-            &apos;https://github.com/bartoszbetka/concent-deployment.git&apos;,
-            branch: &apos;CI&apos;
-        }
-        ansiblePlaybook( 
-            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/set-concent-version.yml&apos;,
-            extras: &apos;--connection local&apos;
-       )
+    <script>node {
+        load &quot;/home/jenkins/concent-deployment/concent-builder/files/jenkins/Jenkinsfile&quot;
     }
-    stage (&apos;Build&apos;) {
-        ansiblePlaybook( 
-            extraVars: [
-                cluster: &apos;concent-dev&apos;,
-            ],
-            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/install-repositories.yml&apos;,
-            extras: &apos;--connection local&apos;
-        )
-        ansiblePlaybook( 
-            extraVars: [
-                cluster: &apos;concent-dev&apos;,
-            ],
-            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/build-test-and-push.yml&apos;,
-            extras: &apos;--connection local&apos;
-        )
-    }
-    stage (&apos;Deploy&apos;) {
-        ansiblePlaybook( 
-            extraVars: [
-                cluster: &apos;concent-dev&apos;,
-            ],
-            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/deploy.yml&apos;,
-            extras: &apos;--connection local&apos;
-        )
-    }
-    stage (&apos;Initialized Test Environment&apos;) {
-        ansiblePlaybook( 
-            extraVars: [
-                cluster: &apos;concent-dev&apos;,
-            ],
-            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/initialized-test-environment.yml&apos;,
-            extras: &apos;--connection local&apos;
-        )
-    }
-    stage (&apos;Test&apos;) {
-        ansiblePlaybook( 
-            extraVars: [
-                cluster: &apos;concent-dev&apos;,
-            ],
-            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/run-tests.yml&apos;,
-            extras: &apos;--connection local&apos;
-        )
-    }
-    stage (&apos;Cleanup Test Environment&apos;) {
-        ansiblePlaybook( 
-            extraVars: [
-                cluster: &apos;concent-dev&apos;,
-            ],
-            inventory: &apos;/home/jenkins/concent-deployment-values/ansible_inventory&apos;, 
-            playbook: &apos;/home/jenkins/concent-deployment/concent-builder/cleanup-test-environment.yml&apos;,
-            extras: &apos;--connection local&apos;
-        )
-    }
-}</script>
+    </script>
     <sandbox>true</sandbox>
   </definition>
   <triggers/>
   <disabled>false</disabled>
-</flow-definition>
