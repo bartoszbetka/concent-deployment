@@ -116,11 +116,11 @@
             port:  8080
             delay: 60
 
-        - name: Download jenkins-cli
-          get_url:
-            url:   "http://{{ jenkins_address }}/jnlpJars/jenkins-cli.jar"
-            dest:  "{{ jenkins_home_dir }}/jenkins-cli.jar"
-            mode:  0755
+        - name: Copy jenkins-cli to jenkins home directory
+          copy:
+            src:        "/var/cache/jenkins/war/WEB-INF/jenkins-cli.jar"
+            dest:       "{{ jenkins_home_dir }}/jenkins-cli.jar"
+            remote_src: yes
 
         - name: Install needed plugin for jenkins
           command: java                                               \
