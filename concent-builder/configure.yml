@@ -101,7 +101,7 @@
 
         - name: Add nginx config
           copy:
-            src:        "jenkins-configuration-files/jenkins"
+            src:        "files/jenkins/jenkins"
             dest:       "/etc/nginx/sites-enabled/jenkins"
 
         - name: Restart nginx service
